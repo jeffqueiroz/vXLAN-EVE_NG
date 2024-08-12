@@ -1,0 +1,125 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+hostname DC1_SPINE_02\
+\
+nv overlay evpn\
+feature ospf\
+feature bgp\
+feature pim\
+feature telnet\
+nv overlay evpn\
+feature ospf\
+feature bgp\
+feature pim\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1\fs26 \cf0 feature bgp\
+feature interface-vlan\
+feature vn-segment-vlan-based\
+feature fabric forwarding\
+feature nv overlay\
+nv overlay evpn
+\f0\fs24 \
+
+\f1\fs26 cli alias name wr copy run start\
+
+\f0\fs24 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 no ip domain-lookup\
+\
+ip pim rp-address 100.100.100.100 group-list 225.0.0.0/8\
+ip pim bsr rp-candidate loopback1 group-list 225.0.0.0/8\
+ip pim ssm range 232.0.0.0/8\
+ip pim anycast-rp 100.100.100.100 1.1.1.1\
+ip pim anycast-rp 100.100.100.100 2.2.2.2\
+vlan 1\
+\
+interface Ethernet1/1\
+  description TO LEAF_02\
+  no switchport\
+  mtu 9216\
+  ip address 10.0.0.9/30\
+  ip ospf network point-to-point\
+  no ip ospf passive-interface\
+  ip router ospf 100 area 0.0.0.0\
+  ip pim sparse-mode\
+  no shutdown\
+\
+interface Ethernet1/2\
+  description TO LEAF_01\
+  no switchport\
+  mtu 9216\
+  ip address 10.0.0.13/30\
+  ip ospf network point-to-point\
+  no ip ospf passive-interface\
+  ip router ospf 100 area 0.0.0.0\
+  ip pim sparse-mode\
+  no shutdown\
+\
+interface Ethernet1/3\
+  description TO LEAF_03\
+  no switchport\
+  mtu 9216\
+  ip address 10.0.0.21/30\
+  ip ospf network point-to-point\
+  no ip ospf passive-interface\
+  ip router ospf 100 area 0.0.0.0\
+  ip pim sparse-mode\
+  no shutdown\
+\
+interface mgmt0\
+  vrf member management\
+\
+interface loopback0\
+  description RID\
+  ip address 2.2.2.2/32\
+  ip router ospf 100 area 0.0.0.0\
+  ip pim sparse-mode\
+\
+interface loopback1\
+  description MCAST ANYCAST RP\
+  ip address 100.100.100.100/32\
+  ip router ospf 100 area 0.0.0.0\
+  ip pim sparse-mode\
+icam monitor scale\
+\
+line console\
+line vty\
+boot nxos bootflash:/nxos.9.3.6.bin sup-1\
+router ospf 100\
+  router-id 2.2.2.2\
+  passive-interface default\
+router bgp 65500\
+  router-id 2.2.2.2\
+  neighbor 3.3.3.3\
+    remote-as 65500\
+    update-source loopback0\
+    address-family l2vpn evpn\
+      send-community\
+      send-community extended\
+  neighbor 4.4.4.4\
+    remote-as 65500\
+    update-source loopback0\
+    address-family l2vpn evpn\
+      send-community\
+      send-community extended\
+      route-reflector-client\
+  neighbor 5.5.5.5\
+    remote-as 65500\
+    update-source loopback0\
+    address-family l2vpn evpn\
+      send-community\
+      send-community extended\
+      route-reflector-client\
+\
+\
+!\
+\
+\
+!end}
